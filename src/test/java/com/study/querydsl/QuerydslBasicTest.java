@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import static com.study.querydsl.entity.QMember.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
@@ -65,12 +66,14 @@ public class QuerydslBasicTest {
     @Test
     public void startQuerydsl() {
 
-        QMember m = new QMember("m");
+//        QMember m = new QMember("m");
+//        QMember m = QMember.member;     // 기본 인스턴스
+        // 제일 좋은 static 방식
 
         var findMember = queryFactory
-                .selectFrom(m)
-                .from(m)
-                .where(m.username.like("member1"))      // 파라미터 바인딩 처리
+                .selectFrom(member)
+                .from(member)
+                .where(member.username.like("member1"))      // 파라미터 바인딩 처리
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
