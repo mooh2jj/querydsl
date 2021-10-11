@@ -240,4 +240,22 @@ public class QuerydslBasicTest {
         assertThat(teamB.get(member.age.avg())).isEqualTo(35);  // (30 + 40) / 2
     }
 
+    /**
+     * 팀 A에 소속된 모든 회원
+     */
+    @Test
+    public void join() {
+        var results = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.team, team)
+                .where(team.name.eq("teamA"))
+                .fetch();
+
+//        assertThat(results)
+//                .extracting("username")
+//                .containsExactly("member1", "member2");
+
+
+    }
+
 }
