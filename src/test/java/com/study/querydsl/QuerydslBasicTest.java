@@ -112,22 +112,22 @@ public class QuerydslBasicTest {
     @Test
     public void resultsQuery() {
 
-        // List
+//         List
 //        var fetch = queryFactory
 //                .selectFrom(member)
 //                .fetch();
-        // 단 건
+////         단 건
 //        var findMember1 = queryFactory
 //                .selectFrom(member)
 //                .where(member.username.eq("member2"))
 //                .fetchOne();
-        // 처음 한 건 조회
+////         처음 한 건 조회
 //        var findMember2 = queryFactory
 //                .selectFrom(member)
 //                .fetchFirst();  // fectchOne() & limit(1)
-
-
-        // 페이징에서 사용
+//
+//
+////         페이징에서 사용
 //        var results = queryFactory
 //                .selectFrom(member)
 //                .fetchResults();
@@ -135,6 +135,36 @@ public class QuerydslBasicTest {
         var count = queryFactory
                 .selectFrom(member)
                 .fetchCount();
+    }
+
+    /**
+     * 회원 정렬 순서
+     *  1. 회원 나이 내림차순 desc
+     *  2. 회원 이름 오름차순 asc
+     *  단 2에서 회원이름 없으면 마지막에 출력 nulls last
+     */
+    @Test
+    public void sort() {
+
+        em.persist(new Member(null, 100));
+        em.persist(new Member("member5", 100));
+        em.persist(new Member("member6", 100));
+
+        var results = queryFactory
+                .selectFrom(member)
+                .where(member.age.eq(100))
+                .orderBy(member.age.desc(), member.username.asc().nullsLast())
+                .fetch();
+
+        Member member5 = results.get(0);
+        Member member6 = results.get(1);
+
+        Member memberNull = results.get(2);     // null은 마지막에 놓여짐
+
+        assertThat(member5.getUsername()).isEqualTo("member5");
+        assertThat(member6.getUsername()).isEqualTo("member6");
+        assertThat(memberNull.getUsername()).isNull();
+
     }
 
 }
