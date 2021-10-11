@@ -372,4 +372,20 @@ public class QuerydslBasicTest {
                 .containsExactly(20, 30, 40);
     }
 
+
+    @Test
+    public void tupleProjection() {
+        var tuples = queryFactory
+                .select(member.username, member.age)
+                .from(member)
+                .fetch();
+
+        for (Tuple tuple : tuples) {
+            var username = tuple.get(member.username);
+            var age = tuple.get(member.age);
+            System.out.println("username = " + username);
+            System.out.println("age = " + age);
+        }
+    }
+
 }
