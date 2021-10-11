@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional  //  롤백용
-@Commit     // 안없애면 다음 테스트에도 남아있음!
+//@Commit     // 안없애면 다음 테스트에도 남아있음!
 class MemberTest {
 
     @Autowired
