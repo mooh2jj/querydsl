@@ -312,7 +312,7 @@ public class QuerydslBasicTest {
         List<Tuple> result = queryFactory
                 .select(member, team)
                 .from(member)
-                .leftJoin(team)     // .leftJoin(member.team, team) 과 상반돼!
+                .leftJoin(team)     // .leftJoin(member.team, team) 과 상반돼!, join이면 null인 row는 안 찾음!
                 .on(member.username.eq(team.name))
                 .fetch();
 
