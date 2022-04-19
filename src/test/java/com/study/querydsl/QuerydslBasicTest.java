@@ -242,7 +242,7 @@ public class QuerydslBasicTest {
         List<Tuple> results = queryFactory
                 .select(team.name, member.age.avg())
                 .from(member)
-                .join(member.team.team)
+                .join(member.team, team)
                 .groupBy(team.name)
                 .fetch();
 
