@@ -126,25 +126,29 @@ public class QuerydslBasicTest {
     @Test
     public void resultsQuery() {
 
-//         List
-//        var fetch = queryFactory
-//                .selectFrom(member)
-//                .fetch();
-////         단 건
-//        var findMember1 = queryFactory
-//                .selectFrom(member)
-//                .where(member.username.eq("member2"))
-//                .fetchOne();
-////         처음 한 건 조회
-//        var findMember2 = queryFactory
-//                .selectFrom(member)
-//                .fetchFirst();  // fectchOne() & limit(1)
-//
-//
-////         페이징에서 사용
-//        var results = queryFactory
-//                .selectFrom(member)
-//                .fetchResults();
+//      list
+        List<Member> fetch = queryFactory
+                .selectFrom(member)
+                .fetch();
+//         단 건
+        Member findMember1 = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq("member2"))
+                .fetchOne();
+//         처음 한 건 조회
+        Member findMember2 = queryFactory
+                .selectFrom(member)
+                .fetchFirst();  // fectchOne() & limit(1)
+
+
+//         페이징에서 사용
+        QueryResults<Member> results = queryFactory
+                .selectFrom(member)
+                .fetchResults();
+
+        results.getTotal();
+        List<Member> content = results.getResults();
+
         // count 쿼리
         long count = queryFactory
                 .selectFrom(member)
