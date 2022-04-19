@@ -244,6 +244,7 @@ public class QuerydslBasicTest {
                 .from(member)
                 .join(member.team, team)
                 .groupBy(team.name)
+//                .having(team.id.gt(2))        // having도 가능
                 .fetch();
 
         Tuple teamA = results.get(0);
