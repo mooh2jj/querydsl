@@ -29,6 +29,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // querydsl
     implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
 // https://mvnrepository.com/artifact/com.github.gavlyukovskiy/p6spy-spring-boot-starter
     implementation group: 'com.github.gavlyukovskiy', name: 'p6spy-spring-boot-starter', version: '1.5.8'
 
