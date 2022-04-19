@@ -87,7 +87,7 @@ public class QuerydslBasicTest {
 //        QMember m = QMember.member;     // 기본 인스턴스
         // 제일 좋은 static 방식
 
-        var findMember = queryFactory
+        Member findMember = queryFactory
                 .selectFrom(member)
                 .from(member)
                 .where(member.username.like("member1"))      // 파라미터 바인딩 처리
@@ -98,7 +98,7 @@ public class QuerydslBasicTest {
 
     @Test
     public void search() {
-        var findMember = queryFactory
+        Member findMember = queryFactory
                 .selectFrom(member)
                 .where(member.username.eq("member1")
                         .and(member.age.between(10, 30)))
@@ -108,8 +108,8 @@ public class QuerydslBasicTest {
     }
 
     @Test
-    public void searchAndParm() {
-        var findMember = queryFactory
+    public void searchAndParam() {
+        Member findMember = queryFactory
                 .selectFrom(member)
                 .where(     // and() ,(쉼표) 대체 가능
                         member.username.eq("member1"),
@@ -146,7 +146,7 @@ public class QuerydslBasicTest {
 //                .selectFrom(member)
 //                .fetchResults();
         // count 쿼리
-        var count = queryFactory
+        long count = queryFactory
                 .selectFrom(member)
                 .fetchCount();
     }
@@ -164,7 +164,7 @@ public class QuerydslBasicTest {
         em.persist(new Member("member5", 100));
         em.persist(new Member("member6", 100));
 
-        var results = queryFactory
+        List<Member> results = queryFactory
                 .selectFrom(member)
                 .where(member.age.eq(100))
                 .orderBy(member.age.desc(), member.username.asc().nullsLast())
@@ -183,7 +183,7 @@ public class QuerydslBasicTest {
 
     @Test
     public void paging1() {
-        var results = queryFactory
+        List<Member> results = queryFactory
                 .selectFrom(member)
                 .orderBy(member.username.desc())
                 .offset(1)
@@ -195,7 +195,7 @@ public class QuerydslBasicTest {
 
     @Test
     public void paging2() {
-        var results = queryFactory
+        QueryResults<Member> results = queryFactory
                 .selectFrom(member)
                 .orderBy(member.username.desc())
                 .offset(1)
@@ -211,7 +211,7 @@ public class QuerydslBasicTest {
     @Test
     public void qggregation() {
         // Tuple이란?
-        var results = queryFactory
+        List<Tuple> results = queryFactory
                 .select(
                         member.count(),
                         member.age.sum(),
@@ -235,7 +235,7 @@ public class QuerydslBasicTest {
      */
     @Test
     public void gropby() throws Exception{
-        var results = queryFactory
+        List<Tuple> results = queryFactory
                 .select(team.name, member.age.avg())
                 .from(member)
                 .join(member.team.team)
@@ -257,7 +257,7 @@ public class QuerydslBasicTest {
      */
     @Test
     public void join() {
-        var results = queryFactory
+        List<Member> results = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.team, team)
                 .where(team.name.eq("teamA"))
@@ -315,9 +315,23 @@ public class QuerydslBasicTest {
             System.out.println("t=" + tuple);
         }
     }
-
     @PersistenceUnit
     EntityManagerFactory emf;
+
+    @Test
+    public void fetchJoinNo() {
+        em.flush();
+        em.clear();
+
+        Member findMember = queryFactory
+                .selectFrom(member)
+                .where(member.username.eq("member1"))
+                .fetchOne();
+
+        boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
+        assertThat(loaded).as("페치 조인 미적용").isFalse();
+    }
+
 
     @Test
     public void fetchJoinUse() throws Exception {
@@ -327,7 +341,7 @@ public class QuerydslBasicTest {
 
         Member findMember = queryFactory
                 .selectFrom(member)
-                .join(member.team, team).fetchJoin()
+                .join(member.team, team).fetchJoin()    // 페치조인 적용
                 .where(member.username.eq("member1"))
                 .fetchOne();
         boolean loaded =
