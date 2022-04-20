@@ -542,6 +542,7 @@ public class QuerydslBasicTest {
     }
 
     /**
+     * 동적 쿼리
      * 2. WhereParam -> BooleanExpression 조합을 할 수 있어 코드가 깔끔해져! 물론, null 처리를 잘해야되지만.
      */
 
@@ -577,7 +578,7 @@ public class QuerydslBasicTest {
         return ageCond != null ? member.age.eq(ageCond) : null;
     }
 
-    private BooleanExpression allEq(String usernameCond, Integer ageCond) {
+    private BooleanExpression allEq(String usernameCond, Integer ageCond) {     // 이방식에 가장 좋은 방법은 메서드들끼리도 조합, 재사용이 가능해져!
         return usernameEq(usernameCond).and(ageEq(ageCond));
     }
 
