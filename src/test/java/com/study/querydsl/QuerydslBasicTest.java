@@ -402,16 +402,29 @@ public class QuerydslBasicTest {
 
     @Test
     public void tupleProjection() {
-        var tuples = queryFactory
+        List<Tuple> tuples = queryFactory
                 .select(member.username, member.age)
                 .from(member)
                 .fetch();
 
         for (Tuple tuple : tuples) {
-            var username = tuple.get(member.username);
-            var age = tuple.get(member.age);
+            String username = tuple.get(member.username);
+            Integer age = tuple.get(member.age);
             System.out.println("username = " + username);
             System.out.println("age = " + age);
+        }
+    }
+
+
+    @Test
+    public void findDtoByJPQL() {   // 진짜 별로;; new + 패키지명 다 적어야 돼!
+        List<MemberDto> result = em.createQuery(
+                        "select new com.study.querydsl.dto.MemberDto(m.username, m.age) " +
+                                "from Member m", MemberDto.class)
+                .getResultList();
+
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto= " + memberDto);
         }
     }
 
@@ -420,10 +433,23 @@ public class QuerydslBasicTest {
      */
 
     @Test
+    public void findDtoBySetter() {
+        List<MemberDto> result = queryFactory
+                .select(Projections.bean(MemberDto.class,   // bean을 통해 setter로 꽂이는 방법
+                        member.username,
+                        member.age))
+                .from(member)
+                .fetch();
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto= " + memberDto);
+        }
+    }
+
+    @Test
     public void findDtoByField() {
 
-        var result = queryFactory
-                .select(Projections.bean(MemberDto.class,
+        List<MemberDto> result = queryFactory
+                .select(Projections.fields(MemberDto.class, // setter없이 field에 바로 꽂는 방법
                         member.username,
                         member.age))
                 .from(member)
@@ -437,8 +463,8 @@ public class QuerydslBasicTest {
     @Test
     public void findDtoByConstructor() {
 
-        var result = queryFactory
-                .select(Projections.constructor(MemberDto.class,
+        List<MemberDto> result = queryFactory
+                .select(Projections.constructor(MemberDto.class,    // 생성자에 필드가 제대로 꽂아야 오류 안나!
                         member.username,
                         member.age))
                 .from(member)
@@ -452,12 +478,12 @@ public class QuerydslBasicTest {
     @Test
     public void findUserDto() {
 
-        QMember memberSub = new QMember("memberSub");
+        QMember memberSub = new QMember("memberSub");       // 서브쿼리용 객체
 
-        var result = queryFactory
+        List<UserDto> result = queryFactory
                 .select(Projections.fields(UserDto.class,
-                        member.username.as("name"),
-                        ExpressionUtils.as(JPAExpressions
+                        member.username.as("name"),         // 별칭 as()로 사용
+                        ExpressionUtils.as(JPAExpressions   // 서브쿼리 적용
                         .select(memberSub.age.max()).from(memberSub), "age")
                 ))
                 .from(member)
