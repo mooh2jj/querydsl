@@ -7,6 +7,7 @@ import com.study.querydsl.entity.Team;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -22,8 +23,8 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
-    // TODO : error 뜲! ##고쳐야 할 부분!
     @Test
+    @Transactional
     public void basicTest() {
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -38,8 +39,8 @@ class MemberRepositoryTest {
         assertThat(result2).containsExactly(member);
     }
 
-    // TODO : error 뜲! ##고쳐야 할 부분!
     @Test
+    @Transactional
     public void searchTest() {
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
